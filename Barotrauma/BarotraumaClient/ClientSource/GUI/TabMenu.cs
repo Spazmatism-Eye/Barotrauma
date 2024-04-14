@@ -1700,12 +1700,12 @@ namespace Barotrauma
                 skillName.RectTransform.MinSize = new Point(0, skillName.Rect.Height);
                 skillContainer.RectTransform.MinSize = new Point(0, skillName.Rect.Height);
 
-                new GUITextBlock(new RectTransform(new Vector2(0.15f, 1.0f), skillContainer.RectTransform), Math.Floor(skill.Level).ToString("F0"), textAlignment: Alignment.TopRight);
+                new GUITextBlock(new RectTransform(new Vector2(0.15f, 1.0f), skillContainer.RectTransform), $"{skill.Level:0.##}", textAlignment: Alignment.TopRight);
 
-                float modifiedSkillLevel = MathF.Floor(character?.GetSkillLevel(skill.Identifier) ?? skill.Level);
-                if (!MathUtils.NearlyEqual(MathF.Floor(modifiedSkillLevel), MathF.Floor(skill.Level)))
+                float modifiedSkillLevel = character?.GetSkillLevel(skill.Identifier) ?? skill.Level;
+                if (!MathUtils.NearlyEqual(MathF.Round(modifiedSkillLevel), MathF.Round(skill.Level)))
                 {
-                    int skillChange = (int)MathF.Floor(modifiedSkillLevel - MathF.Floor(skill.Level));
+                    double skillChange = modifiedSkillLevel - skill.Level;
                     string stringColor = skillChange switch
                     {
                         > 0 => XMLExtensions.ToStringHex(GUIStyle.Green),
@@ -1713,7 +1713,7 @@ namespace Barotrauma
                         _ => XMLExtensions.ToStringHex(GUIStyle.TextColorNormal)
                     };
 
-                    RichString changeText = RichString.Rich($"(‖color:{stringColor}‖{(skillChange > 0 ? "+" : string.Empty) + skillChange}‖color:end‖)");
+                    RichString changeText = RichString.Rich($"(‖color:{stringColor}‖{(skillChange > 0 ? "+" : string.Empty)}{skillChange:0.##}‖color:end‖)");
                     new GUITextBlock(new RectTransform(new Vector2(0.15f, 1.0f), skillContainer.RectTransform), changeText) { Padding = Vector4.Zero };
                 }
                 skillContainer.Recalculate();

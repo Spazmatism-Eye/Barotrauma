@@ -77,6 +77,8 @@ namespace Barotrauma
         /// </summary>
         public readonly static GUIColor Green = new GUIColor("Green", new Color(154, 213, 163, 255));
 
+        public readonly static GUIColor LightGreen = new GUIColor("Green", new Color(198, 221, 201, 255));
+
         /// <summary>
         /// General red color used for elements whose colors are set from code
         /// </summary>

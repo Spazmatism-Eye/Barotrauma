@@ -149,13 +149,13 @@ namespace Barotrauma
                     }
                     if (!MathUtils.NearlyEqual(MathF.Round(modifiedSkillLevel), MathF.Round(skill.Level)))
                     {
-                        int skillChange = (int)MathF.Round(modifiedSkillLevel - skill.Level);
-                        string changeText = $"{(skillChange > 0 ? "+" : "") + skillChange}";
-                        new GUITextBlock(new RectTransform(new Vector2(1.0f, 1.0f), skillName.RectTransform), $"{(int)skill.Level} ({changeText})", textColor: textColor, font: font, textAlignment: Alignment.CenterRight);
+                        float skillChange = modifiedSkillLevel - skill.Level;
+                        string changeText = $"{(skillChange > 0 ? "+" : "")}{skillChange:0.##}";
+                        new GUITextBlock(new RectTransform(new Vector2(1.0f, 1.0f), skillName.RectTransform), $"{skill.Level:0.##} ({changeText})", textColor: textColor, font: font, textAlignment: Alignment.CenterRight);
                     }
                     else
                     {
-                        new GUITextBlock(new RectTransform(new Vector2(1.0f, 1.0f), skillName.RectTransform), ((int)skill.Level).ToString(), textColor: textColor, font: font, textAlignment: Alignment.CenterRight);
+                        new GUITextBlock(new RectTransform(new Vector2(1.0f, 1.0f), skillName.RectTransform), $"{skill.Level:0.##}", textColor: textColor, font: font, textAlignment: Alignment.CenterRight);
                     }
                 }
             }
@@ -215,15 +215,24 @@ namespace Barotrauma
             // if we increased by more than 1 in one increase, then display special color (for talents)
             bool specialIncrease = Math.Abs(newLevel - prevLevel) >= 1.0f;
 
+            float increase = newLevel - prevLevel;
+            int levelIncrease = (int)newLevel - (int)prevLevel;
+
+            if (increase != 0)
+            {
+                Character?.AddMessage(
+                $"+{increase:0.00} {TextManager.Get("SkillName." + skillIdentifier).Value} ({newLevel:0.00})",
+                GUIStyle.LightGreen,
+                false, skillIdentifier);
+            }
+
             if ((int)newLevel > (int)prevLevel)
             {
-                Character.Controlled?.SelectedItem?.OnPlayerSkillsChanged();
-                int increase = Math.Max((int)newLevel - (int)prevLevel, 1);
-
                 Character?.AddMessage(
-                    "+[value] "+ TextManager.Get("SkillName." + skillIdentifier).Value, 
-                    specialIncrease ? GUIStyle.Orange : GUIStyle.Green, 
-                    playSound: Character == Character.Controlled, skillIdentifier, increase);
+                $"+{levelIncrease} {TextManager.Get("SkillName." + skillIdentifier).Value} ({(int)newLevel})",
+                specialIncrease ? GUIStyle.Orange : GUIStyle.Green,
+                playSound: Character == Character.Controlled, skillIdentifier);
+                Character.Controlled?.SelectedItem?.OnPlayerSkillsChanged();
             }
         }
 
